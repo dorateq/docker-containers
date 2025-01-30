@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: true
+  vars:
+    container_count: 1
+    docker_compose: 
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Copy file from control node to managed node
+      ansible.builtin.copy:
+       src: docker-compose.yml
+       dest: /home/ansible/docker-compose.yml
+
+    - name: Check Docker containers
+      ansible.builtin.command:
+        cmd: docker-compose -f /home/ansible/docker-compose.yml up -d
+      register: docker_cmd
+
+    - name: Check Docker containers
+      ansible.builtin.command:
+        cmd: docker-compose -f /home/ansible/docker-compose.yml ps
+      register: docker_ps
+
+    - name: Print Docker containers
+      debug:
+        msg: "{{ docker_ps.stdout_lines }}" 
