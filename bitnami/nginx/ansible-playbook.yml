@@ -29,3 +29,11 @@
     - name: Print Docker containers
       debug:
         msg: "{{ docker_ps.stdout_lines }}" 
+
+    - name: Check nginx is responding to port 80 on local machine
+      ansible.builtin.command:
+        cmd: curl localhost:80
+      register: nginx_port_test
+    - name: Print Nginx test
+      debug:
+        msg: "{{  nginx_port_test }}" 
